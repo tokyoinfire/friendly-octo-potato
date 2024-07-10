@@ -1,0 +1,51 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model VideoCall {
+  id                    String                 @id @default(cuid())
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  description           String?
+  endTime               DateTime?
+  title                 String?
+  startTime             DateTime?
+  videoCallParticipants VideoCallParticipant[]
+}
+
+model CalendarBooking {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  startTime DateTime?
+  endTime   DateTime?
+  call      String?
+}
+
+model User {
+  id                    String                 @id @default(cuid())
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  firstName             String?
+  lastName              String?
+  username              String                 @unique
+  email                 String?                @unique
+  password              String
+  roles                 Json
+  videoCallParticipants VideoCallParticipant[]
+}
+
+model VideoCallParticipant {
+  id          String     @id @default(cuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  videoCall   VideoCall? @relation(fields: [videoCallId], references: [id])
+  videoCallId String?
+  user        User?      @relation(fields: [userId], references: [id])
+  userId      String?
+}
